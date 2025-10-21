@@ -6,16 +6,40 @@
 //
 
 
+
 import Foundation
 
+enum Period: String {
+    case week
+    case month
+    case year
+    
+    var freezeLimit: Int {
+        switch self {
+        case .week: return 2
+        case .month: return 8
+        case .year: return 96
+        }
+    }
+}
+
+
 struct UserGoal {
-    var goalType: String // "Week", "Month", "Year"
-    var startDate: Date
-    var freezeLimit: Int
+    var text: String
+    var period: Period
     var streak: Int
     var lastLoggedDate: Date?
     var usedFreezes: Int
+    
+    var freezeLimit: Int {
+        period.freezeLimit
+    }
 }
+
+
+
+
+
 
 
 
