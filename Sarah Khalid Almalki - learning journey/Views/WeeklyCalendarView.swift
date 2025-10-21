@@ -2,7 +2,7 @@
 //  WeeklyCalendarView.swift
 //  Sarah Khalid Almalki - learning journey
 //
-//  Created by Sarah Khalid Almalki on 28/04/1447 AH.
+//  Created by Sarah Khalid Almalki on 29/04/1447 AH.
 //
 
 import SwiftUI
