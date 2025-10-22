@@ -6,35 +6,51 @@
 //
 
 
-
+import SwiftUI
+import Combine
 import Foundation
 
-enum Period: String {
-    case week
-    case month
-    case year
-    
-    var freezeLimit: Int {
-        switch self {
-        case .week: return 2
-        case .month: return 8
-        case .year: return 96
+class UserGoal: ObservableObject {
+    enum Period: String {
+        case week
+        case month
+        case year
+
+        var freezeLimit: Int {
+            switch self {
+            case .week: return 2
+            case .month: return 8
+            case .year: return 96
+            }
         }
     }
-}
 
-
-struct UserGoal {
+    // Original properties
     var text: String
     var period: Period
-    var streak: Int
-    var lastLoggedDate: Date?
-    var usedFreezes: Int
+    @Published var streak: Int
+    @Published var lastLoggedDate: Date?
+    @Published var usedFreezes: Int
     
-    var freezeLimit: Int {
-        period.freezeLimit
+    var freezeLimit: Int { period.freezeLimit }
+
+    // NEW: track which dates were learned or freezed
+    @Published var learnedDates: Set<Date> = []
+    @Published var freezedDates: Set<Date> = []
+
+    // Initializer
+    init(text: String, period: Period, streak: Int, lastLoggedDate: Date?, usedFreezes: Int) {
+        self.text = text
+        self.period = period
+        self.streak = streak
+        self.lastLoggedDate = lastLoggedDate
+        self.usedFreezes = usedFreezes
+        self.learnedDates = []
+        self.freezedDates = []
     }
+
 }
+
 
 
 

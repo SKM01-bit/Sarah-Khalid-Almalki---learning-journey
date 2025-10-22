@@ -19,6 +19,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                
                 VStack(spacing: 40) {
                     // 🔥 Top flame icon
                     Image(systemName: "flame.fill")
@@ -108,7 +109,7 @@ struct ContentView: View {
                 // 🔘 Start Learning Button (static)
                 VStack {
                     Button(action: {
-                        let periodEnum: Period = selectedPeriod == "Week" ? .week :
+                        let periodEnum: UserGoal.Period = selectedPeriod == "Week" ? .week :
                                                  selectedPeriod == "Month" ? .month : .year
 
                         savedGoal = UserGoal(
@@ -122,6 +123,7 @@ struct ContentView: View {
                     }) {
                         Text("Start learning")
                             .frame(width: 182, height: 48)
+                            .background(Color(red: 0.70, green: 0.25, blue: 0.0))
                             .cornerRadius(30)
                             .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 3)
                             .foregroundColor(.white)                    }
