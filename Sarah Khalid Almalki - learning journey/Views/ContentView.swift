@@ -129,9 +129,13 @@ struct ContentView: View {
                             .foregroundColor(.white)                    }
                     if let goal = savedGoal {
                         NavigationLink(
-                            destination: WeeklyCalendarView(userGoal: goal), // pass the UserGoal
+                            destination: WeeklyCalendarView(
+                           //     userGoal: goal,
+                                viewModel: ViewModel(userGoal: goal) // create ViewModel for that goal
+                            ),
                             isActive: $navigate
-                        ) {
+                        )
+                        {
                             EmptyView()
                         }
                     }
