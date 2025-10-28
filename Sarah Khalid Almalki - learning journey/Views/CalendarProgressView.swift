@@ -116,16 +116,17 @@ struct CalendarProgressView: View {
         HStack(spacing: 16) {
             HStack(spacing: 6) {
                 Circle().fill(Color.orange).frame(width: 10, height: 10)
-                Text("Today").font(.caption).foregroundColor(.gray)
+                Text("Today (no activity)").font(.caption).foregroundColor(.gray)
             }
             HStack(spacing: 6) {
-                Circle().stroke(Color.orange, lineWidth: 2).frame(width: 10, height: 10)
+                Circle().fill(Color.orange.opacity(0.3)).frame(width: 10, height: 10)
                 Text("Learned").font(.caption).foregroundColor(.gray)
             }
             HStack(spacing: 6) {
-                Circle().stroke(Color.blue, lineWidth: 2).frame(width: 10, height: 10)
+                Circle().fill(Color.blue.opacity(0.3)).frame(width: 10, height: 10)
                 Text("Freezed").font(.caption).foregroundColor(.gray)
             }
+
             Spacer()
         }
         .padding(.horizontal)
@@ -143,19 +144,23 @@ private struct DayCell: View {
         let freezed = viewModel.isFreezed(date)
 
         ZStack {
-            if isToday {
-                Circle().fill(Color.orange)
-            } else if learned {
-                Circle().stroke(Color.orange, lineWidth: 2)
+            // New precedence: Learned > Freezed > Today > Nothing
+            if learned {
+                Circle().fill(Color.orange.opacity(0.3))
             } else if freezed {
-                Circle().stroke(Color.blue, lineWidth: 2)
+                Circle().fill(Color.blue.opacity(0.3))
+            } else if isToday {
+                Circle().fill(Color.orange)
+            } else {
+                Circle().stroke(Color.gray.opacity(0.15), lineWidth: 1)
             }
+
             Text(dayString(date))
                 .font(.subheadline)
                 .foregroundColor(foregroundColor(isToday: isToday, learned: learned, freezed: freezed))
         }
         .frame(height: 40)
-        .contentShape(Rectangle()) // so taps can be added later if needed
+        .contentShape(Rectangle())
     }
 
     private func dayString(_ date: Date) -> String {
@@ -165,9 +170,10 @@ private struct DayCell: View {
     }
 
     private func foregroundColor(isToday: Bool, learned: Bool, freezed: Bool) -> Color {
-        if isToday { return .white }
+        // Match precedence: if learned/freezed, use their colors; if only today, white text
         if learned { return .orange }
         if freezed { return .blue }
+        if isToday { return .white }
         return .primary
     }
 }

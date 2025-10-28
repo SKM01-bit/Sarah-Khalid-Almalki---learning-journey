@@ -43,7 +43,13 @@ struct WeeklyCalendarView: View {
                     showCompletion = true
                 }
             }
-        }
+            .onAppear {
+                // 🧪 temporary test shortcut
+                if viewModel.userGoal.streak >= viewModel.streakTarget {
+                    showCompletion = true
+                }
+            }
+ }
     }
     
     // MARK: - Header
@@ -109,11 +115,48 @@ struct WeeklyCalendarView: View {
         HStack {
             Text("\(viewModel.monthTitle)")
                 .font(.title2.bold())
-            Button(action: { viewModel.showMonthPicker = true }) {
+            Button(action: {
+                viewModel.showMonthPicker = true
+            }) {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .bold))
                     .foregroundColor(.orange)
             }
+            .sheet(isPresented: $viewModel.showMonthPicker) {
+                VStack {
+                    Text("Select Month & Year")
+                        .font(.headline)
+                        .padding()
+
+                    HStack {
+                        Picker("Month", selection: $viewModel.selectedMonth) {
+                            ForEach(1...12, id: \.self) { month in
+                                Text(DateFormatter().monthSymbols[month - 1]).tag(month)
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        .frame(maxWidth: .infinity)
+
+                        Picker("Year", selection: $viewModel.selectedYear) {
+                            ForEach(2020...2030, id: \.self) { year in
+                                Text("\(year)").tag(year)
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
+                        .frame(maxWidth: .infinity)
+                    }
+
+                    Button("Done") {
+                        viewModel.showMonthPicker = false
+                    }
+                    .padding()
+                    .foregroundColor(.orange)
+                .presentationDetents([.medium])
+                    .padding()
+                }
+            }
+
+
             Spacer()
             Button(action: { viewModel.currentWeekOffset -= 1 }) {
                 Image(systemName: "chevron.left")
@@ -182,9 +225,9 @@ struct WeeklyCalendarView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(viewModel.userGoal.freezedDates.count)")
                         .font(.system(size: 20))
-                        .offset(x: 10, y: -5)
+                        .offset(x: 10)
                     Text(viewModel.userGoal.freezedDates.count == 1 ? "Day Freezed" : "Days Freezed")
-                        .offset(x: 10, y: 10)
+                        .offset(x: 10)
                         .font(.system(size: 14))
                 }
             }
@@ -313,16 +356,16 @@ struct WeeklyCalendarView: View {
 #Preview {
     let sampleGoal = UserGoal(
         text: "Swift",
-        period: .month,
+        period: .week,
         streak: 0,
         lastLoggedDate: nil,
         usedFreezes: 0
     )
-    
+
     let sampleVM = ViewModel(userGoal: sampleGoal)
-    
     return WeeklyCalendarView(viewModel: sampleVM)
         .preferredColorScheme(.dark)
 }
+
 
 /*// 👇 Popup for Month & Year selection .sheet(isPresented: $showMonthPicker) { VStack(spacing: 20) { Text("Select Month & Year") .font(.headline) .padding(.top) // Month Picker HStack { Picker("Month", selection: $selectedMonth) { ForEach(1...12, id: \.self) { index in Text(months[index - 1]).tag(index) } } .pickerStyle(WheelPickerStyle()) .frame(maxWidth: .infinity) Picker("Year", selection: $selectedYear) { ForEach(years, id: \.self) { year in Text("\(year)").tag(year) } } .pickerStyle(WheelPickerStyle()) .frame(maxWidth: .infinity) } .frame(height: 200) // optional to control picker height .pickerStyle(WheelPickerStyle()) Button("Done") { showMonthPicker = false // Later: trigger calendar update based on selectedMonth & selectedYear } .padding() .background(Color.orange.opacity(0.2)) .cornerRadius(10) } .presentationDetents([.medium]) .padding() }*/

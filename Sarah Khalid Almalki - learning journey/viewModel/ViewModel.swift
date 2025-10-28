@@ -20,9 +20,12 @@ class ViewModel: ObservableObject {
 
     init(userGoal: UserGoal) {
         self.userGoal = userGoal
-        loadProgress()
-        checkForStreakBreak()
-        checkPeriodReset()
+        // Defer any mutations/publishes to after the first render cycle
+        Task { @MainActor in
+            loadProgress()
+            checkForStreakBreak()
+            checkPeriodReset()
+        }
     }
 
     var streakTarget: Int {
@@ -76,7 +79,7 @@ class ViewModel: ObservableObject {
         userGoal.learnedDates = []
         userGoal.freezedDates = []
         userGoal.save()
-        objectWillChange.send()
+        // No manual objectWillChange.send(); @Published handles publishing
     }
 
     // Public intent for "Start the same goal again" in CompletionView
@@ -97,8 +100,11 @@ class ViewModel: ObservableObject {
     func checkPeriodReset() {
         let savedPeriod = UserDefaults.standard.string(forKey: "savedPeriod") ?? userGoal.period.rawValue
         if savedPeriod != userGoal.period.rawValue {
-            userGoal.usedFreezes = 0
-            UserDefaults.standard.set(userGoal.period.rawValue, forKey: "savedPeriod")
+            // Defer mutation to avoid publishing during view updates
+            Task { @MainActor in
+                self.userGoal.usedFreezes = 0
+                UserDefaults.standard.set(self.userGoal.period.rawValue, forKey: "savedPeriod")
+            }
         }
     }
 
@@ -110,7 +116,7 @@ class ViewModel: ObservableObject {
         userGoal.lastLoggedDate = today
         userGoal.streak += 1
         saveProgress()
-        objectWillChange.send()
+        // No manual objectWillChange.send()
     }
 
     func freezeDay() {
@@ -121,7 +127,7 @@ class ViewModel: ObservableObject {
         userGoal.freezedDates.insert(today)
         userGoal.usedFreezes += 1
         saveProgress()
-        objectWillChange.send()
+        // No manual objectWillChange.send()
     }
 
     var currentWeekStartDate: Date {
@@ -184,11 +190,14 @@ class ViewModel: ObservableObject {
     }
 
     private func restoreUserGoal(from data: CodableUserGoal) {
-        userGoal.text = data.text
-        userGoal.period = UserGoal.Period(rawValue: data.period) ?? .week
-        userGoal.lastLoggedDate = data.lastLoggedDate
-        userGoal.learnedDates = Set(data.learnedDates)
-        userGoal.freezedDates = Set(data.freezedDates)
+        // Perform after current init cycle finishes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.userGoal.text = data.text
+            self.userGoal.period = UserGoal.Period(rawValue: data.period) ?? .week
+            self.userGoal.lastLoggedDate = data.lastLoggedDate
+            self.userGoal.learnedDates = Set(data.learnedDates)
+            self.userGoal.freezedDates = Set(data.freezedDates)
+        }
     }
 
     private func saveProgress() {

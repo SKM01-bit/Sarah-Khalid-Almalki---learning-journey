@@ -9,17 +9,22 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.colorScheme) var scheme
 
-    // Static placeholders for design
     @State private var inputText: String = ""
-    @State private var selectedPeriod: String = "Week"
     @State private var navigate = false
-    @State private var savedGoal: UserGoal? = nil
+    @ObservedObject var userGoal: UserGoal
+    @State private var selectedPeriod: UserGoal.Period
 
+    // ✅ Public init so #Preview works
+    init(userGoal: UserGoal = UserGoal.load()) {
+        UserDefaults.standard.removeObject(forKey: "savedUserGoal") // optional: reset everything
+        self.userGoal = userGoal
+        _selectedPeriod = State(initialValue: userGoal.period)
+        _inputText = State(initialValue: userGoal.text)
+    }
 
     var body: some View {
         NavigationStack {
             VStack {
-                
                 VStack(spacing: 40) {
                     // 🔥 Top flame icon
                     Image(systemName: "flame.fill")
@@ -55,27 +60,33 @@ struct ContentView: View {
                             .font(.system(size: 35, weight: .bold))
                         Text("This app will help you learn everyday!\n\n")
                             .foregroundColor(.gray)
-                        
+
                         Text("I want to learn")
                             .font(.system(size: 20))
                         TextField("Swift", text: $inputText)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                        
+                            .onChange(of: inputText) { newValue in
+                                userGoal.text = newValue
+                                userGoal.save()
+                            }
+
                         Text("\nI want to learn it in a")
                             .font(.system(size: 20))
-                        
+
                         // 🗓 Period selection buttons
                         HStack(spacing: 15) {
-                            ForEach(["Week", "Month", "Year"], id: \.self) { period in
+                            ForEach(UserGoal.Period.allCases, id: \.self) { periodEnum in
                                 Button(action: {
-                                    selectedPeriod = period
+                                    selectedPeriod = periodEnum
+                                    userGoal.period = periodEnum
+                                    userGoal.save()
                                 }) {
-                                    Text(period)
+                                    Text(periodEnum.rawValue.capitalized)
                                         .frame(width: 97, height: 48)
                                         .glassEffect(.clear)
                                         .foregroundColor(Color("Color"))
                                         .background(
-                                            selectedPeriod == period
+                                            selectedPeriod == periodEnum
                                             ? Color(red: 0.70, green: 0.25, blue: 0.0)
                                             : Color.black.opacity(0.4)
                                         )
@@ -106,19 +117,12 @@ struct ContentView: View {
 
                 Spacer()
 
-                // 🔘 Start Learning Button (static)
+                // 🔘 Start Learning Button
                 VStack {
                     Button(action: {
-                        let periodEnum: UserGoal.Period = selectedPeriod == "Week" ? .week :
-                                                 selectedPeriod == "Month" ? .month : .year
-
-                        savedGoal = UserGoal(
-                            text: inputText,
-                            period: periodEnum,
-                            streak: 0,
-                            lastLoggedDate: nil,
-                            usedFreezes: 0
-                        )
+                        userGoal.text = inputText
+                        userGoal.period = selectedPeriod
+                        userGoal.save()
                         navigate = true
                     }) {
                         Text("Start learning")
@@ -126,35 +130,39 @@ struct ContentView: View {
                             .background(Color(red: 0.70, green: 0.25, blue: 0.0))
                             .cornerRadius(30)
                             .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 3)
-                            .foregroundColor(.white)                    }
-                    if let goal = savedGoal {
-                        NavigationLink(
-                            destination: WeeklyCalendarView(
-                           //     userGoal: goal,
-                                viewModel: ViewModel(userGoal: goal) // create ViewModel for that goal
-                            ),
-                            isActive: $navigate
-                        )
-                        {
-                            EmptyView()
-                        }
+                            .foregroundColor(.white)
                     }
 
-
-                    
+                    NavigationLink(
+                        destination: WeeklyCalendarView(
+                            viewModel: ViewModel(userGoal: userGoal)
+                        ),
+                        isActive: $navigate
+                    ) {
+                        EmptyView()
+                    }
                 }
+            }
+            // ✅ Keeps UI synced with stored goal each time it reappears
+            .onAppear {
+                inputText = userGoal.text
+                selectedPeriod = userGoal.period
             }
         }
     }
 }
 
 #Preview {
-    ContentView()
+    let previewGoal = UserGoal(
+        text: "Swift",
+        period: .month,
+        streak: 0,
+        lastLoggedDate: nil,
+        usedFreezes: 0
+    )
+    ContentView(userGoal: previewGoal)
         .preferredColorScheme(.dark)
 }
-
-
-
 
 
 /*width: 109px;

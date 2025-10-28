@@ -14,6 +14,7 @@ struct NewGoal: View {
     @State private var selectedPeriod: UserGoal.Period
     @State private var showConfirmAlert = false
 
+
     init(userGoal: UserGoal, viewModel: ViewModel) {
         self.userGoal = userGoal
         self.viewModel = viewModel
