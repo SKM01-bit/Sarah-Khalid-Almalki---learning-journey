@@ -16,4 +16,4 @@ Learning Journey is a learn tracking app deveopled by Swift,
 
 # Author: Sarah Khalid Almalki - Design & IOS Developer
 # Saudi Arabia
-# Sarahalsarah77@gmail.com
+# Email: Sarahalsarah77@gmail.com
