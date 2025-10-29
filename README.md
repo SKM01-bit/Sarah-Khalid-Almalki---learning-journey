@@ -1,17 +1,20 @@
-Learning Journey is a learn tracking app deveopled by Swift,
+Learning Journey is a learning tracking application created by Swift, applying the MVVM methodolgy.
 
-# The app features:
-- firstly, the app asks the user to enter your goal and pick a duration.
-  
-- then the main functionality interface will appear, with a week calendar and a streak for both logged and streak days.
-  
-- in this page you will have the option to either log the day as learned or freeze the day.
+The interfaces for this app were provided to us through Sketch, and our task was to create an app using these interfaces.
 
-- you will have a freeze days limit, 2 in a week, 8 in a month, and 96 in a year.
-  
-- then everyday you can use the app tp update your status for the day, wether Learned / Freezed, or check the previous days status.
-  
-- the streak needs to be updated within 32 hours, else the streak will be gone.
+# The application includes:
+
+- initially, the app prompts the user to specify their goal and choose a timeframe.
+
+- After that, the primary functionality interface will display a weekly calendar along with a streak for both recorded and continuous days.
+
+- on this page, you can choose to record the day as learned or to pause the day.
+
+- you will be allowed a maximum of 2 freeze days weekly, 8 monthly, and 96 yearly.
+
+- then each day, you can utilize the app to update your status for the day, whether Learned / Freezed, or review the statuses from previous days.
+
+- the streak must be refreshed within 32 hours, or else it will be lost.
 
 
 # Author: Sarah Khalid Almalki - Design & IOS Developer
