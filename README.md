@@ -16,6 +16,15 @@ The interfaces for this app were provided to us through Sketch, and our task was
 
 - the streak must be refreshed within 32 hours, or else it will be lost.
 
+<img width="206" height="622" alt="Simulator Screenshot - iPhone 17 Pro - 2025-10-29 at 10 19 55" src="https://github.com/user-attachments/assets/1ffbbed5-828a-4b9d-9daf-fcdda2373aec" />
+
+<img width="206" height="622" alt="Simulator Screenshot - iPhone 17 Pro - 2025-10-29 at 10 20 38" src="https://github.com/user-attachments/assets/3b7b4021-d8e2-4951-a210-a2da248a35b7" />
+
+<img width="206" height="622" alt="Simulator Screenshot - iPhone 17 Pro - 2025-10-29 at 10 24 26" src="https://github.com/user-attachments/assets/c33c9677-e34e-4425-a9af-4a246273e478" />
+
+<img width="206" height="622" alt="Simulator Screenshot - iPhone 17 Pro - 2025-10-29 at 10 21 22" src="https://github.com/user-attachments/assets/4ca846df-ccf4-40e4-8853-b69133f56dfe" />
+
+
 
 # Author: Sarah Khalid Almalki - Design & IOS Developer
 # Saudi Arabia
